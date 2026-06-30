@@ -1,24 +1,38 @@
-# Agent Page Protocol 0.1
+# Agent Contact Protocol 0.1
 
 ## Purpose
 
-Agent Page Protocol defines a public, low-friction contact contract for websites.
-It tells agents how to ask questions, send messages, receive replies, and respect
-limits without scraping hidden UI or guessing endpoints.
+Agent Contact Protocol defines a public, low-friction contact endpoint for
+websites. It tells agents how to ask questions, send messages, receive replies,
+and respect limits without scraping hidden UI or guessing endpoints.
 
 ## Required URLs
 
 ### `GET /agent`
 
-Human-readable HTML page. It SHOULD link to `/agent.md`.
+The public contact contract. It MAY return HTML by default and SHOULD return
+Markdown when the caller sends `Accept: text/markdown`.
 
 ```html
 <link rel="alternate" type="text/markdown" href="/agent.md">
 ```
 
+### `POST /agent`
+
+The default machine contact action. The site decides whether this means "ask the
+site AI", "send an inbound message", "open a channel", or "return a more specific
+endpoint to use next."
+
+The request body SHOULD be JSON. Minimal payload:
+
+```json
+{ "message": "What is this website about?" }
+```
+
 ### `GET /agent.md`
 
-Machine-readable Markdown page. It SHOULD be short, stable, and explicit.
+Optional machine-readable Markdown mirror. It SHOULD be short, stable, and
+explicit.
 
 Recommended headers:
 
@@ -34,7 +48,7 @@ X-Robots-Tag: noindex
 Name the site, canonical URL, and protocol version.
 
 ```md
-Protocol: agent-page/0.1
+Protocol: agent-contact/0.1
 Site: Example
 Canonical: https://example.com/agent
 Machine-readable: https://example.com/agent.md
@@ -44,8 +58,9 @@ Machine-readable: https://example.com/agent.md
 
 List every public machine contact path. Common capabilities:
 
-- `ask` - an AI or help endpoint for questions about the site.
-- `message` - an inbound message endpoint.
+- `contact` - the default `POST /agent` action.
+- `ask` - an AI or help action for questions about the site.
+- `message` - an inbound message action.
 - `reply` - how to continue an existing thread or channel.
 - `webhook_register` - where an agent registers a push URL.
 - `poll` - durable fallback for agents that cannot receive webhooks.
@@ -57,7 +72,8 @@ what happens on rejection.
 
 ## Recommended JSON Hints
 
-Responses from message/control endpoints SHOULD include machine-actionable hints:
+Responses from `POST /agent` and message/control endpoints SHOULD include
+machine-actionable hints:
 
 ```json
 {
@@ -89,15 +105,15 @@ If webhooks are supported, they SHOULD:
 Recommended headers:
 
 ```txt
-Agent-Page-Signature: sha256=<hex>
-Agent-Page-Delivery-Id: <id>
-Agent-Page-Event: message
+Agent-Contact-Signature: sha256=<hex>
+Agent-Contact-Delivery-Id: <id>
+Agent-Contact-Event: message
 ```
 
 ## Polling
 
 Polling is allowed for agents without public inbound HTTP, but it must be slow.
-The `/agent.md` page SHOULD state the minimum interval.
+The `/agent` contract SHOULD state the minimum interval.
 
 Recommended default:
 
@@ -109,7 +125,7 @@ Servers SHOULD return `429 Retry-After` when callers poll too quickly.
 
 ## Non-Goals
 
-Agent Page Protocol does not define:
+Agent Contact Protocol does not define:
 
 - Global identity.
 - Trust or reputation.
@@ -117,4 +133,4 @@ Agent Page Protocol does not define:
 - A universal moderation policy.
 - A replacement for email, ActivityPub, MCP, A2A, or HTTP signatures.
 
-It is only the contact card.
+It is only the contact endpoint.

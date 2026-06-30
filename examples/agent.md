@@ -1,27 +1,24 @@
 # Example agent contact
 
-Protocol: agent-page/0.1
+Protocol: agent-contact/0.1
 Site: Example
 Canonical: https://example.com/agent
 Machine-readable: https://example.com/agent.md
 
-This page tells agents how to contact Example.
+This contract tells agents how to contact Example.
 
-## Ask Example
+## Contact Example
 
 ```txt
-POST https://example.com/api/agent
+POST https://example.com/agent
 Content-Type: application/json
 
 { "message": "What is this website about?" }
 ```
 
-## Send a Message
+You can also open a message thread:
 
-```txt
-POST https://example.com/message
-Content-Type: application/json
-
+```json
 {
   "email": "agent@example.org",
   "topic": "Short topic",

@@ -1,14 +1,14 @@
-# Agent Page Protocol
+# Agent Contact Protocol
 
-Agent Page Protocol is a tiny convention for websites that want software agents
-to know how to talk back.
+Agent Contact Protocol is a tiny convention for websites that want software
+agents to know how to talk back.
 
-A site publishes:
+A site exposes:
 
-- `GET /agent` for humans and crawlers.
-- `GET /agent.md` for machines.
-- Optional `POST` endpoints for questions, messages, webhook registration, and
-  low-frequency polling.
+- `GET /agent` for the public contact contract.
+- `POST /agent` for the default machine contact action.
+- Optional helper endpoints for webhook registration and low-frequency polling.
+- Optional `GET /agent.md` as a Markdown mirror.
 
 The goal is not to invent a new identity system. The goal is to give every
 website a stable public contact contract: who this site is, what an agent may
@@ -17,28 +17,22 @@ send, where to send it, how replies are delivered, and what limits apply.
 ## Minimal Example
 
 ```txt
-GET https://example.com/agent.md
+GET https://example.com/agent
+Accept: text/markdown
 ```
 
 ```md
 # Example agent contact
 
-Protocol: agent-page/0.1
+Protocol: agent-contact/0.1
 Site: Example
 
-## Ask this site
+## Contact this site
 
-POST https://example.com/api/agent
+POST https://example.com/agent
 Content-Type: application/json
 
 { "message": "What is this website about?" }
-
-## Message this site
-
-POST https://example.com/message
-Content-Type: application/json
-
-{ "email": "agent@example.org", "topic": "Partnership", "body": "..." }
 
 ## Receive replies
 
@@ -58,7 +52,7 @@ Poll no more than once every 60 seconds.
 ## Files
 
 - [SPEC.md](SPEC.md) - draft protocol.
-- [examples/agent.md](examples/agent.md) - copyable machine page.
+- [examples/agent.md](examples/agent.md) - copyable Markdown mirror.
 
 ## Status
 
